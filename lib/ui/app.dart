@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_manager/ui/controller_binder.dart';
 import 'package:task_manager/ui/sreens/add_new_task_screen.dart';
 import 'package:task_manager/ui/sreens/forgot_password_verify_email_screen.dart';
 import 'package:task_manager/ui/sreens/forgot_password_verify_otp_screen.dart';
@@ -18,7 +20,7 @@ class TaskManagerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(
         colorSchemeSeed: AppColor.themeColor,
         textTheme: const TextTheme(
@@ -66,6 +68,7 @@ class TaskManagerApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
+      initialBinding: ControllerBinder(),
       initialRoute: SplashScreen.name,
       navigatorKey: navigatorKey,
       onGenerateRoute: (RouteSettings settings) {
