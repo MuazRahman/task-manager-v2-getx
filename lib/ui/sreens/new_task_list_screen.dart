@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/data/models/task_count_by_status_model.dart';
 import 'package:task_manager/data/models/task_count_model.dart';
 import 'package:task_manager/data/models/task_list_by_status_model.dart';
+import 'package:task_manager/data/models/task_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utils/urls.dart';
+import 'package:task_manager/ui/controllers/new_task_by_status_controller.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/snack_bar_message.dart';
 
@@ -23,9 +26,9 @@ class NewTaskListScreen extends StatefulWidget {
 class _NewTaskListScreenState extends State<NewTaskListScreen> {
 
   bool _getTaskCountByStatusInProgress = false;
-  bool _getNewTaskListInProgress = false;
   TaskCountByStatusModel? taskCountByStatusModel;
   TaskListByStatusModel? newTaskListModel;
+  final NewTaskController _newTaskController = Get.find<NewTaskController>();
 
   @override
   void initState() {
@@ -48,10 +51,18 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
                 _buildTasksSummaryByStatus(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Visibility(
-                    visible: _getNewTaskListInProgress == false,
-                      replacement: const CenteredCircularProgressIndicator(),
-                      child: _buildTaskListView()),
+                  child: GetBuilder<NewTaskController>(
+                    builder: (controller) {
+                      return GetBuilder<NewTaskController>(
+                        builder: (controller) {
+                          return Visibility(
+                              visible: controller.getTaskListInProgress == false,
+                              replacement: const CenteredCircularProgressIndicator(),
+                              child: _buildTaskListView(controller.taskList));
+                        },
+                      );
+                    }
+                  ),
                 ),
               ],
             ),
@@ -70,8 +81,8 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
     );
   }
 
-  Widget _buildTaskListView() {
-    if (newTaskListModel?.taskList?.isEmpty ?? true) {
+  Widget _buildTaskListView(List<TaskModel> taskList) {
+    if (taskList.isEmpty) {
       return SizedBox(
         height: MediaQuery.of(context).size.height / 2, // Adjust height for AppBar and other elements
         child: const Center(
@@ -85,11 +96,11 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
     return ListView.builder(
       shrinkWrap: true,
       primary: false,
-      itemCount: newTaskListModel?.taskList?.length ?? 0,
+      itemCount: taskList.length,
       itemBuilder: (context, index) {
 
           return TaskItemWidget(
-            taskModel: newTaskListModel!.taskList![index],
+            taskModel: taskList[index],
             onDelete: _getTaskCountByStatus,
             onStatusChanged: _getTaskCountByStatus,
           );
@@ -100,57 +111,55 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
   Widget _buildTasksSummaryByStatus() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Visibility(
-        visible: _getTaskCountByStatusInProgress == false,
-        replacement: const CenteredCircularProgressIndicator(),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: taskCountByStatusModel?.taskByStatusList?.length ?? 0,
-                itemBuilder: (context, index) {
-                final TaskCountModel model = taskCountByStatusModel!.taskByStatusList![index];
-                    return TaskStatusSummaryCounterWidget(
-                      count: model.sum.toString(),
-                      title: model.sId ?? '',
-                    );
-                }
+      child: GetBuilder<NewTaskController>(
+        builder: (controller) {
+          return Visibility(
+            visible: controller.getTaskCountByStatusInProgress == false,
+            replacement: const CenteredCircularProgressIndicator(),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 100,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: controller.taskCountByStatusModel.taskByStatusList?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final TaskCountModel model = controller.taskCountByStatusModel.taskByStatusList![index];
+                      return TaskStatusSummaryCounterWidget(
+                        count: model.sum.toString(),
+                        title: model.sId ?? '',
+                      );
+                    }
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
-  Future <void> _getNewTaskList() async {
-    _getNewTaskListInProgress = true;
-    setState(() {});
-    final NetworkResponse response = await NetworkCaller.getRequest(url: Urls.taskListByStatusUrl('New'));
-    if (response.isSuccess) {
-      newTaskListModel = TaskListByStatusModel.fromJson(response.responseData!);
-    } else {
-      showSnackBarMessage(context, response.errorMessage);
-    }
-    _getNewTaskListInProgress = false;
-    setState(() {});
-  }
+  // Future <void> _getNewTaskList() async {
+  //   final bool isSuccess = await _newTaskController.getTaskList();
+  //   if (!isSuccess) {
+  //     showSnackBarMessage(context, _newTaskController.errorMessage!);
+  //   }
+  // }
 
   Future <void> _getTaskCountByStatus() async {
-    _getTaskCountByStatusInProgress = true;
-    setState(() {});
-    final NetworkResponse response = await NetworkCaller.getRequest(url: Urls.taskCountByStatusUrl);
-    if (response.isSuccess) {
-      taskCountByStatusModel = TaskCountByStatusModel.fromJson(response.responseData!);
+    final bool isSuccess = await _newTaskController.getTaskCountByStatus();
+    // final NetworkResponse response = await NetworkCaller.getRequest(url: Urls.taskCountByStatusUrl);
+    if (!isSuccess) {
+      // taskCountByStatusModel = TaskCountByStatusModel.fromJson(response.responseData!);
       // First call the TaskCount API then call NewTask API
-        _getNewTaskList();
-
-    } else {
-      showSnackBarMessage(context, response.errorMessage);
+      //   _getNewTaskList();
+      showSnackBarMessage(context, _newTaskController.errorMessage!);
     }
-    _getTaskCountByStatusInProgress = false;
-    setState(() {});
+    // else {
+    //   showSnackBarMessage(context, response.errorMessage);
+    // }
+    // _getTaskCountByStatusInProgress = false;
+    // setState(() {});
   }
 }

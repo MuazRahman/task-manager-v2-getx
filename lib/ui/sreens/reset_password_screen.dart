@@ -1,8 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/data/models/reset_password_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utils/urls.dart';
+import 'package:task_manager/ui/controllers/resetPassword_controller.dart';
 import 'package:task_manager/ui/sreens/sign_in_screen.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/snack_bar_message.dart';
@@ -29,6 +31,7 @@ class _ResetPasswordScreenState
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _resetPasswordInProgress = false;
   ResetPassword? resetPassword;
+  final ResetPasswordController _resetPasswordController = Get.find<ResetPasswordController>();
 
   @override
   Widget build(BuildContext context) {
@@ -151,21 +154,13 @@ class _ResetPasswordScreenState
   }
 
   Future <void> _postResetPassword() async{
-    _resetPasswordInProgress = true;
-    setState(() {});
-    Map <String, dynamic> requestBody = {
-      "email": widget.email,
-      "OTP" : widget.otp,
-      "password": _confirmPasswordTEController.text,
-    };
-    final NetworkResponse response = await NetworkCaller.postRequest(url: Urls.resetPasswordUrl, body: requestBody);
-    _resetPasswordInProgress = false;
-    if (response.isSuccess) {
+    final isSuccess = await _resetPasswordController.postResetPassword(widget.email, widget.otp, _confirmPasswordTEController.text);
+    if (isSuccess) {
       Navigator.pushReplacementNamed(context, SignInScreen.name);
-      showSnackBarMessage(context, 'Password Changed Successfully');
+      showSnackBarMessage(context, _resetPasswordController.errorMessage!);
     }
     else {
-      showSnackBarMessage(context, response.errorMessage);
+      showSnackBarMessage(context, _resetPasswordController.errorMessage!);
     }
   }
 

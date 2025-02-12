@@ -1,9 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/data/models/recover_verify_otp_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utils/urls.dart';
+import 'package:task_manager/ui/controllers/forget_password_verify_otp_controller.dart';
 import 'package:task_manager/ui/sreens/reset_password_screen.dart';
 import 'package:task_manager/ui/sreens/sign_in_screen.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
@@ -27,15 +29,7 @@ class _ForgotPasswordVerifyOtpScreenState extends State<ForgotPasswordVerifyOtpS
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _getVerifyOTPInProgress = false;
   RecoverVerifyOTP? recoverVerifyOtp;
-  // String? email;
-  //
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   // print(email);
-  //   email = ModalRoute.of(context)?.settings.arguments as String?;
-  //   print(email);
-  // }
+  final VerifyOTPController _verifyOTPController = Get.find<VerifyOTPController>();
 
   @override
   Widget build(BuildContext context) {
@@ -74,16 +68,20 @@ class _ForgotPasswordVerifyOtpScreenState extends State<ForgotPasswordVerifyOtpS
                   const SizedBox(
                     height: 24,
                   ),
-                  Visibility(
-                    visible: _getVerifyOTPInProgress == false,
-                    replacement: const CenteredCircularProgressIndicator(),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _onTapVerifyOTPButton();
-                        //Navigator.pushNamed(context, ResetPasswordScreen.name);
-                      },
-                      child: const Icon(Icons.arrow_circle_right_outlined),
-                    ),
+                  GetBuilder<VerifyOTPController>(
+                    builder: (controller) {
+                      return Visibility(
+                        visible: controller.inProgress == false,
+                        replacement: const CenteredCircularProgressIndicator(),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _onTapVerifyOTPButton();
+                            //Navigator.pushNamed(context, ResetPasswordScreen.name);
+                          },
+                          child: const Icon(Icons.arrow_circle_right_outlined),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(
                     height: 48,
@@ -105,31 +103,15 @@ class _ForgotPasswordVerifyOtpScreenState extends State<ForgotPasswordVerifyOtpS
       _getVerifyOTP();
     }
   }
-  // the email is not received from forgotPasswordVerifyEmailScreen
   Future<void> _getVerifyOTP() async {
-    _getVerifyOTPInProgress = true;
-    setState(() {});
-    print(widget.email);
-    final NetworkResponse response = await NetworkCaller.getRequest(
-        url: Urls.recoverVerifyOTPlUrl(
-            widget.email ?? '',
-            _otpTEController.text.trim(),
-        ),
-    );
-    _getVerifyOTPInProgress = false;
-    setState(() {});
-    if (response.isSuccess) {
-      recoverVerifyOtp = RecoverVerifyOTP.fromJson(response.responseData!);
-      if (recoverVerifyOtp!.status == 'success') {
+    final isSuccess = await _verifyOTPController.getVerifyOTP(widget.email, _otpTEController.text.trim());
+    if (isSuccess) {
         // Navigator.pushNamed(context, ResetPasswordScreen.name);
         String otp = _otpTEController.text.trim();
         Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResetPasswordScreen(email: widget.email,otp: otp,)));
       } else {
-        showSnackBarMessage(context, 'No user found');
+        showSnackBarMessage(context, _verifyOTPController.errorMessage!);
       }
-    } else {
-      showSnackBarMessage(context, 'Response data is in html format');
-    }
   }
 
   Widget _buildPinCodeTextField() {

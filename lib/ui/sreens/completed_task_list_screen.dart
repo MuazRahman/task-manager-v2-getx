@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/data/models/task_list_by_status_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utils/urls.dart';
+import 'package:task_manager/ui/controllers/complete_task_controller.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/snack_bar_message.dart';
 
@@ -20,6 +22,7 @@ class CompletedTaskListScreen extends StatefulWidget {
 class _CompletedTaskListScreenState extends State<CompletedTaskListScreen> {
   bool _getCompletedTaskListInProgress = false;
   TaskListByStatusModel? completedTaskListModel;
+  final CompleteTaskController _completeTaskController = Get.find<CompleteTaskController>();
 
   @override
   void initState() {
@@ -38,10 +41,14 @@ class _CompletedTaskListScreenState extends State<CompletedTaskListScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Visibility(
-                  visible: _getCompletedTaskListInProgress == false,
-                  replacement: const CenteredCircularProgressIndicator(),
-                  child: _buildTaskListView()),
+              child: GetBuilder<CompleteTaskController>(
+                builder: (controller) {
+                  return Visibility(
+                    visible: controller.inProgress == false,
+                    replacement: const CenteredCircularProgressIndicator(),
+                    child: _buildTaskListView(),);
+                },
+              ),
             ),
           ),
         ),
@@ -75,15 +82,9 @@ class _CompletedTaskListScreenState extends State<CompletedTaskListScreen> {
 
 
   Future <void> _getCompletedTaskList() async {
-    _getCompletedTaskListInProgress = true;
-    setState(() {});
-    final NetworkResponse response = await NetworkCaller.getRequest(url: Urls.taskListByStatusUrl('Completed'));
-    if (response.isSuccess) {
-      completedTaskListModel = TaskListByStatusModel.fromJson(response.responseData!);
-    } else {
-      showSnackBarMessage(context, response.errorMessage);
+    final isSuccess = await _completeTaskController.getCompletedTaskList();
+    if (!isSuccess) {
+      showSnackBarMessage(context, _completeTaskController.errorMessage!);
     }
-    _getCompletedTaskListInProgress = false;
-    setState(() {});
   }
 }

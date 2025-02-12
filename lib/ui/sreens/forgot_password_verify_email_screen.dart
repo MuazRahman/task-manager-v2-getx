@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/data/models/recover_verify_email_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utils/urls.dart';
+import 'package:task_manager/ui/controllers/forget_password_verify_email_controller.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/snack_bar_message.dart';
 
@@ -27,6 +29,7 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _getVerifyEmailInProgress = false;
   RecoverVerifyEmail? recoverVerifyEmail;
+  final VerifyMailController _verifyMailController = Get.find<VerifyMailController>();
 
   @override
   Widget build(BuildContext context) {
@@ -77,21 +80,25 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
                   const SizedBox(
                     height: 24,
                   ),
-                  Visibility(
-                    visible: !_getVerifyEmailInProgress,
-                    replacement: const CenteredCircularProgressIndicator(),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _onTapVerifyEmailButton();
-                      },
-                      child: const Icon(Icons.arrow_circle_right_outlined),
-                    ),
+                  GetBuilder<VerifyMailController>(
+                    builder: (controller) {
+                      return Visibility(
+                        visible: !_getVerifyEmailInProgress,
+                        replacement: const CenteredCircularProgressIndicator(),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _onTapVerifyEmailButton();
+                          },
+                          child: const Icon(Icons.arrow_circle_right_outlined),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(
                     height: 48,
                   ),
                   Center(
-                    child: _buildSignInSection(),
+                    child: _buildSignInSection(context),
                   ),
                 ],
               ),
@@ -109,31 +116,19 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
   }
 
   Future<void> _getVerifyMail() async {
-    _getVerifyEmailInProgress = true;
-    setState(() {});
-    final NetworkResponse response = await NetworkCaller.getRequest(
-        url: Urls.recoverVerifyEmailUrl(_emailTEController.text.trim()));
-    _getVerifyEmailInProgress = false;
-    setState(() {});
-
-    if (response.isSuccess) {
-      recoverVerifyEmail = RecoverVerifyEmail.fromJson(response.responseData!);
-      if (recoverVerifyEmail!.status == 'success') {
-        String email = _emailTEController.text.trim();
-        print("Email is => $email");
+    final isSuccess = await _verifyMailController.getVerifyMail(_emailTEController.text.trim());
+    if (isSuccess) {
         // Navigator.to(context, ForgotPasswordVerifyOtpScreen.name, arguments: email);
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ForgotPasswordVerifyOtpScreen(email: email)));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ForgotPasswordVerifyOtpScreen(email: _emailTEController.text.trim())));
       }
       else {
-        showSnackBarMessage(context, 'No user found');
+        showSnackBarMessage(context, _verifyMailController.errorMessage!);
       }
-    }
-    else {
-      showSnackBarMessage(context, 'Network error. Please try again later');
     }
   }
 
-  Widget _buildSignInSection() {
+
+  Widget _buildSignInSection(BuildContext context) {
     return RichText(
       text: TextSpan(
         text: "Have an account?  ",
@@ -156,4 +151,4 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
       ),
     );
   }
-}
+

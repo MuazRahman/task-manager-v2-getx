@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager/data/services/network_caller.dart';
-import 'package:task_manager/data/utils/urls.dart';
+import 'package:get/get.dart';
+import 'package:task_manager/ui/controllers/sign_up_controller.dart';
 
 import '../utils/app_color.dart';
 import '../widgets/centered_circular_progress_indicator.dart';
@@ -24,7 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _signUpProgress = false;
+  final SignUpController _signUpController = Get.find<SignUpController>();
 
   @override
   Widget build(BuildContext context) {
@@ -132,14 +132,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(
                     height: 8,
                   ),
-                  Visibility(
-                    visible: _signUpProgress == false,
-                    replacement: const CenteredCircularProgressIndicator(),
-                      child: ElevatedButton(
-                        onPressed: _onTapSignUpButton,
-                        child: const Icon(Icons.arrow_circle_right_outlined),
-                      ),
-                    ),
+                  GetBuilder<SignUpController>(
+                    builder: (controller) {
+                      return Visibility(
+                        visible: controller.inProgress == false,
+                        replacement: const CenteredCircularProgressIndicator(),
+                        child: ElevatedButton(
+                          onPressed: _onTapSignUpButton,
+                          child: const Icon(Icons.arrow_circle_right_outlined),
+                        ),
+                      );
+                    },
+
+                  ),
                   const SizedBox(
                     height: 48,
                   ),
@@ -162,25 +167,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future <void> _registerUser() async {
-    _signUpProgress = false;
-    setState(() {});
-    Map <String, dynamic> requestBody = {
-      "email": _emailTEController.text.trim(),
-      "firstName": _firstNameTEController.text.trim(),
-      "lastName": _lastNameTEController.text.trim(),
-      "mobile": _mobileTEController.text.trim(),
-      "password": _passwordTEController.text,
-      "photo":""
-    };
-    final NetworkResponse response = await NetworkCaller.postRequest(url: Urls.registrationUrl, body: requestBody);
-    _signUpProgress = false;
-    setState(() {});
-    if (response.isSuccess) {
+    final bool isSuccess = await _signUpController.registerUser(
+        _emailTEController.text.trim(),
+        _firstNameTEController.text.trim(),
+        _lastNameTEController.text.trim(),
+        _mobileTEController.text.trim(),
+        _passwordTEController.text,
+        '',
+    );
+    if (isSuccess) {
       _clearTextFields();
       showSnackBarMessage(context, 'New user registration successful.');
     }
     else {
-      showSnackBarMessage(context, response.errorMessage);
+      showSnackBarMessage(context, _signUpController.errorMessage!);
     }
   }
 
