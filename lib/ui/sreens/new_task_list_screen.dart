@@ -136,7 +136,7 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
     final bool isSuccess = await _newTaskController.getTaskCountByStatus();
     // final NetworkResponse response = await NetworkCaller.getRequest(url: Urls.taskCountByStatusUrl);
     if (!isSuccess) {
-      showSnackBarMessage(context, _newTaskController.errorMessage!);
+      showSnackBarMessage(_newTaskController.errorMessage!);
     }
   }
 }

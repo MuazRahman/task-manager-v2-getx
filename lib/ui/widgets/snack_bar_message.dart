@@ -1,5 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-void showSnackBarMessage(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+void showSnackBarMessage(String message) {
+  Get.snackbar(
+    'Notification',
+    message,
+    snackPosition: SnackPosition.BOTTOM,
+    duration: const Duration(seconds: 2),
+  );
 }

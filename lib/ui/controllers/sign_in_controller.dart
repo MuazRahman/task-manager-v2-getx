@@ -26,7 +26,7 @@ class SignInController extends GetxController {
       await AuthController.saveUserData(token, userModel);
       // Navigator.pushReplacementNamed(context, MainBottomNavScreen.name);
       isSuccess = true;
-      _errorMessage = null;
+      _errorMessage = 'Sign in successful';
     }
     else {
 

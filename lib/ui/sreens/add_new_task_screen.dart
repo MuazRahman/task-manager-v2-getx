@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utils/urls.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
@@ -20,6 +21,9 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
   final TextEditingController _descriptionTEController = TextEditingController();
   final GlobalKey <FormState> _formKey = GlobalKey<FormState>();
   bool _addNewTaskInProgress =false;
+
+
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -107,11 +111,11 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
     setState(() {});
     if (response.isSuccess) {
       _clearTextFields();
-      showSnackBarMessage(context, 'New task added!');
+      showSnackBarMessage('New task added!');
       Navigator.pop(context, true);
     }
     else {
-      showSnackBarMessage(context, response.errorMessage);
+      showSnackBarMessage(response.errorMessage);
     }
   }
 

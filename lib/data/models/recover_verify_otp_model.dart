@@ -22,7 +22,7 @@ class RecoverVerifyOTP {
 class RecoverVerifyOTPData {
   bool? acknowledged;
   int? modifiedCount;
-  Null? upsertedId;
+  Null upsertedId;
   int? upsertedCount;
   int? matchedCount;
 

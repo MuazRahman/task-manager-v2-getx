@@ -82,7 +82,7 @@ class _CancelledTaskListScreenState extends State<CancelledTaskListScreen> {
   Future <void> _getCancelledTaskList() async {
     final isSuccess = await _cancelledTaskController.getCancelledTaskList();
     if (!isSuccess) {
-      showSnackBarMessage(context, _cancelledTaskController.errorMessage!);
+      showSnackBarMessage(_cancelledTaskController.errorMessage!);
     }
   }
 }

@@ -5,8 +5,6 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utils/urls.dart';
-import 'package:task_manager/ui/controllers/auth_controller.dart';
-import 'package:task_manager/ui/controllers/sign_in_controller.dart';
 
 class UpdateProfileController extends GetxController {
 

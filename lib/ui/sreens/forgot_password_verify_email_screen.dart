@@ -78,7 +78,7 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
                   GetBuilder<VerifyMailController>(
                     builder: (controller) {
                       return Visibility(
-                        visible: controller.inProgress, // !_getVerifyEmailInProgress,
+                        visible: controller.inProgress == false, // !_getVerifyEmailInProgress,
                         replacement: const CenteredCircularProgressIndicator(),
                         child: ElevatedButton(
                           onPressed: () {
@@ -114,10 +114,10 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
     final isSuccess = await _verifyMailController.getVerifyMail(_emailTEController.text.trim());
     if (isSuccess) {
         // Navigator.to(context, ForgotPasswordVerifyOtpScreen.name, arguments: email);
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ForgotPasswordVerifyOtpScreen(email: _emailTEController.text.trim())));
+        Get.to(ForgotPasswordVerifyOtpScreen(email: _emailTEController.text.trim()));
       }
       else {
-        showSnackBarMessage(context, _verifyMailController.errorMessage!);
+        showSnackBarMessage(_verifyMailController.errorMessage!);
       }
     }
   }

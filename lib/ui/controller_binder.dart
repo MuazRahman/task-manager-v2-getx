@@ -5,7 +5,7 @@ import 'package:task_manager/ui/controllers/forget_password_verify_email_control
 import 'package:task_manager/ui/controllers/forget_password_verify_otp_controller.dart';
 import 'package:task_manager/ui/controllers/new_task_by_status_controller.dart';
 import 'package:task_manager/ui/controllers/progress_task_controller.dart';
-import 'package:task_manager/ui/controllers/resetPassword_controller.dart';
+import 'package:task_manager/ui/controllers/reset_password_controller.dart';
 import 'package:task_manager/ui/controllers/sign_in_controller.dart';
 import 'package:task_manager/ui/controllers/sign_up_controller.dart';
 import 'package:task_manager/ui/controllers/update_profile_controller.dart';

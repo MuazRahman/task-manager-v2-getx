@@ -105,9 +105,9 @@ class _ForgotPasswordVerifyOtpScreenState extends State<ForgotPasswordVerifyOtpS
     if (isSuccess) {
         // Navigator.pushNamed(context, ResetPasswordScreen.name);
         String otp = _otpTEController.text.trim();
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResetPasswordScreen(email: widget.email,otp: otp,)));
+        Get.to(ResetPasswordScreen(email: widget.email, otp: otp));
       } else {
-        showSnackBarMessage(context, _verifyOTPController.errorMessage!);
+        showSnackBarMessage(_verifyOTPController.errorMessage!);
       }
   }
 

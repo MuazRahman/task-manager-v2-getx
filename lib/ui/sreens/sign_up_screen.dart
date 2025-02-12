@@ -177,10 +177,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
     if (isSuccess) {
       _clearTextFields();
-      showSnackBarMessage(context, 'New user registration successful.');
+      showSnackBarMessage('New user registration successful.');
     }
     else {
-      showSnackBarMessage(context, _signUpController.errorMessage!);
+      showSnackBarMessage(_signUpController.errorMessage!);
     }
   }
 

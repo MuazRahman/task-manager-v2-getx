@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/ui/controllers/sign_in_controller.dart';
 import 'package:task_manager/ui/sreens/sign_up_screen.dart';
+import 'package:task_manager/ui/widgets/snack_bar_message.dart';
 
 
 import '../utils/app_color.dart';
 import '../widgets/centered_circular_progress_indicator.dart';
 import '../widgets/screen_background.dart';
-import '../widgets/snack_bar_message.dart';
 import 'forgot_password_verify_email_screen.dart';
 import 'main_bottom_nav_screen.dart';
 
@@ -129,11 +129,12 @@ class _SignInScreenState extends State<SignInScreen> {
   Future <void> _signIn() async{
     final bool isSuccess = await _signInController.signIn(
         _emailTEController.text.trim(), _passwordTEController.text);
-    if (isSuccess) {
-      Navigator.pushReplacementNamed(context, MainBottomNavScreen.name);
+    if (!isSuccess) {
+      showSnackBarMessage(_signInController.errorMessage!);
     }
     else {
-        showSnackBarMessage(context, _signInController.errorMessage!);
+        Get.offNamed(MainBottomNavScreen.name);
+
     }
   }
 

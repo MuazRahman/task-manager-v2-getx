@@ -133,7 +133,7 @@ class _TaskItemWidgetState extends State<TaskItemWidget> {
 
       }
       else {
-        showSnackBarMessage(context, response.errorMessage);
+        showSnackBarMessage(response.errorMessage);
       }
     }
     createNewTask();
@@ -151,7 +151,7 @@ class _TaskItemWidgetState extends State<TaskItemWidget> {
                 onTap: () {
                   _deleteTask();
                   Navigator.pop(context);
-                  showSnackBarMessage(context, 'Task Deleted Successfully');
+                  showSnackBarMessage('Task Deleted Successfully');
                 },
                 child: const Text('Confirm'),
               ),
@@ -176,9 +176,7 @@ class _TaskItemWidgetState extends State<TaskItemWidget> {
       // Call onDelete if provided
       widget.onDelete?.call();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response.errorMessage)),
-      );
+          showSnackBarMessage(response.errorMessage);
     }
   }
 

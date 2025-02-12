@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/data/models/reset_password_model.dart';
-import 'package:task_manager/ui/controllers/resetPassword_controller.dart';
+import 'package:task_manager/ui/controllers/reset_password_controller.dart';
 import 'package:task_manager/ui/sreens/sign_in_screen.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/snack_bar_message.dart';
@@ -94,7 +94,7 @@ class _ResetPasswordScreenState
                   GetBuilder<ResetPasswordController>(
                     builder: (controller) {
                       return Visibility(
-                        visible: controller.inProgress, // _resetPasswordInProgress == false,
+                        visible: controller.inProgress == false, // _resetPasswordInProgress == false,
                         replacement: const CenteredCircularProgressIndicator(),
                         child: ElevatedButton(
                           onPressed: () {
@@ -150,18 +150,18 @@ class _ResetPasswordScreenState
     if (_newPasswordTEController.text == _confirmPasswordTEController.text) {
       _postResetPassword();
     } else {
-      showSnackBarMessage(context, "Password didn't match");
+      showSnackBarMessage("Password didn't match");
     }
   }
 
   Future <void> _postResetPassword() async{
     final isSuccess = await _resetPasswordController.postResetPassword(widget.email, widget.otp, _confirmPasswordTEController.text);
     if (isSuccess) {
-      Navigator.pushReplacementNamed(context, SignInScreen.name);
-      showSnackBarMessage(context, _resetPasswordController.errorMessage!);
+      Get.offNamed(SignInScreen.name);
+      showSnackBarMessage(_resetPasswordController.errorMessage!);
     }
     else {
-      showSnackBarMessage(context, _resetPasswordController.errorMessage!);
+      showSnackBarMessage(_resetPasswordController.errorMessage!);
     }
   }
 

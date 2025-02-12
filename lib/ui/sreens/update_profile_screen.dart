@@ -26,7 +26,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   XFile? _pickedImage;
-  bool _updateProfileInProgress = false;
   final UpdateProfileController _updateProfileController = Get.find<UpdateProfileController>();
 
   @override
@@ -222,11 +221,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _pickedImage
     );
     if (isSuccess) {
-      showSnackBarMessage(context, _updateProfileController.errorMessage!);
+      showSnackBarMessage(_updateProfileController.errorMessage!);
       _passwordTEController.clear();
     }
     else {
-      showSnackBarMessage(context, _updateProfileController.errorMessage!);
+      showSnackBarMessage(_updateProfileController.errorMessage!);
     }
   }
 

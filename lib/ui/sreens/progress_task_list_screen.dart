@@ -75,7 +75,7 @@ class _ProgressTaskListScreenState extends State<ProgressTaskListScreen> {
   Future<void> _getProgressTaskList() async {
     final isSuccess = await _progressTaskController.getProgressTaskList();
     if (!isSuccess) {
-      showSnackBarMessage(context, _progressTaskController.errorMessage!);
+      showSnackBarMessage(_progressTaskController.errorMessage!);
     }
   }
 }
