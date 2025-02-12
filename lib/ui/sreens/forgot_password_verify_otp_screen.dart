@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/data/models/recover_verify_otp_model.dart';
-import 'package:task_manager/data/services/network_caller.dart';
-import 'package:task_manager/data/utils/urls.dart';
 import 'package:task_manager/ui/controllers/forget_password_verify_otp_controller.dart';
 import 'package:task_manager/ui/sreens/reset_password_screen.dart';
 import 'package:task_manager/ui/sreens/sign_in_screen.dart';
@@ -27,7 +25,6 @@ class ForgotPasswordVerifyOtpScreen extends StatefulWidget {
 class _ForgotPasswordVerifyOtpScreenState extends State<ForgotPasswordVerifyOtpScreen> {
   final TextEditingController _otpTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _getVerifyOTPInProgress = false;
   RecoverVerifyOTP? recoverVerifyOtp;
   final VerifyOTPController _verifyOTPController = Get.find<VerifyOTPController>();
 

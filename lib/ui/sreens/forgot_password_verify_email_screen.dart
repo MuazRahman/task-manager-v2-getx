@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/data/models/recover_verify_email_model.dart';
-import 'package:task_manager/data/services/network_caller.dart';
-import 'package:task_manager/data/utils/urls.dart';
 import 'package:task_manager/ui/controllers/forget_password_verify_email_controller.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/snack_bar_message.dart';
@@ -27,7 +23,6 @@ class ForgotPasswordVerifyEmailScreen extends StatefulWidget {
 class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEmailScreen> {
   final TextEditingController _emailTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _getVerifyEmailInProgress = false;
   RecoverVerifyEmail? recoverVerifyEmail;
   final VerifyMailController _verifyMailController = Get.find<VerifyMailController>();
 
@@ -83,7 +78,7 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
                   GetBuilder<VerifyMailController>(
                     builder: (controller) {
                       return Visibility(
-                        visible: !_getVerifyEmailInProgress,
+                        visible: controller.inProgress, // !_getVerifyEmailInProgress,
                         replacement: const CenteredCircularProgressIndicator(),
                         child: ElevatedButton(
                           onPressed: () {

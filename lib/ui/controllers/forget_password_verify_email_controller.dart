@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/data/models/recover_verify_email_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
@@ -26,10 +27,9 @@ class VerifyMailController extends GetxController {
       recoverVerifyEmail = RecoverVerifyEmail.fromJson(response.responseData!);
       if (recoverVerifyEmail!.status == 'success') {
         String email = mail;
-        print("Email is => $email");
+        debugPrint("Email is => $email");
         isSuccess = true;
         // Navigator.to(context, ForgotPasswordVerifyOtpScreen.name, arguments: email);
-        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => ForgotPasswordVerifyOtpScreen(email: email)));
       }
       else {
         _errorMessage =  'No user found';

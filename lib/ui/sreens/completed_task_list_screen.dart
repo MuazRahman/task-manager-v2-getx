@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/data/models/task_list_by_status_model.dart';
-import 'package:task_manager/data/services/network_caller.dart';
-import 'package:task_manager/data/utils/urls.dart';
+import 'package:task_manager/data/models/task_model.dart';
 import 'package:task_manager/ui/controllers/complete_task_controller.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/snack_bar_message.dart';
@@ -20,7 +19,6 @@ class CompletedTaskListScreen extends StatefulWidget {
 }
 
 class _CompletedTaskListScreenState extends State<CompletedTaskListScreen> {
-  bool _getCompletedTaskListInProgress = false;
   TaskListByStatusModel? completedTaskListModel;
   final CompleteTaskController _completeTaskController = Get.find<CompleteTaskController>();
 
@@ -46,7 +44,7 @@ class _CompletedTaskListScreenState extends State<CompletedTaskListScreen> {
                   return Visibility(
                     visible: controller.inProgress == false,
                     replacement: const CenteredCircularProgressIndicator(),
-                    child: _buildTaskListView(),);
+                    child: _buildTaskListView(controller.taskList),);
                 },
               ),
             ),
@@ -56,8 +54,8 @@ class _CompletedTaskListScreenState extends State<CompletedTaskListScreen> {
     );
   }
 
-  Widget _buildTaskListView() {
-    if (completedTaskListModel?.taskList?.isEmpty ?? true) {
+  Widget _buildTaskListView(List<TaskModel> taskList) {
+    if (taskList.isEmpty) {
       return const Center(
         child: Text(
           'No completed tasks available',
@@ -69,10 +67,10 @@ class _CompletedTaskListScreenState extends State<CompletedTaskListScreen> {
     return ListView.builder(
       shrinkWrap: true,
       primary: false,
-      itemCount: completedTaskListModel?.taskList?.length ?? 0,
+      itemCount: taskList.length,
       itemBuilder: (context, index) {
         return TaskItemWidget(
-          taskModel: completedTaskListModel!.taskList![index],
+          taskModel: taskList[index],
           onDelete: _getCompletedTaskList,
           onStatusChanged: _getCompletedTaskList,
         );

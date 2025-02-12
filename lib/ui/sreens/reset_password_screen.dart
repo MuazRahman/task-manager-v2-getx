@@ -2,8 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/data/models/reset_password_model.dart';
-import 'package:task_manager/data/services/network_caller.dart';
-import 'package:task_manager/data/utils/urls.dart';
 import 'package:task_manager/ui/controllers/resetPassword_controller.dart';
 import 'package:task_manager/ui/sreens/sign_in_screen.dart';
 import 'package:task_manager/ui/widgets/centered_circular_progress_indicator.dart';
@@ -29,7 +27,6 @@ class _ResetPasswordScreenState
   final TextEditingController _newPasswordTEController = TextEditingController();
   final TextEditingController _confirmPasswordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _resetPasswordInProgress = false;
   ResetPassword? resetPassword;
   final ResetPasswordController _resetPasswordController = Get.find<ResetPasswordController>();
 
@@ -94,15 +91,19 @@ class _ResetPasswordScreenState
                   const SizedBox(
                     height: 24,
                   ),
-                  Visibility(
-                    visible: _resetPasswordInProgress == false,
-                    replacement: const CenteredCircularProgressIndicator(),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _onTapResetPasswordButton();
-                      },
-                      child: const Text('Confirm'),
-                    ),
+                  GetBuilder<ResetPasswordController>(
+                    builder: (controller) {
+                      return Visibility(
+                        visible: controller.inProgress, // _resetPasswordInProgress == false,
+                        replacement: const CenteredCircularProgressIndicator(),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _onTapResetPasswordButton();
+                          },
+                          child: const Text('Confirm'),
+                        ),
+                      );
+                    }
                   ),
                   const SizedBox(
                     height: 48,

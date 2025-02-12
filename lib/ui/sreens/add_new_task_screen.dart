@@ -68,6 +68,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
                     if (value?.trim().isEmpty ?? true) {
                       return 'Enter your description here';
                     }
+                    return null;
                   },
                 ),
                 const SizedBox(

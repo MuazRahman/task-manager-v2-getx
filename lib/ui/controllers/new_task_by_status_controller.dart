@@ -2,17 +2,15 @@ import 'package:get/get.dart';
 import 'package:task_manager/data/models/task_count_by_status_model.dart';
 import 'package:task_manager/data/models/task_list_by_status_model.dart';
 import 'package:task_manager/data/models/task_model.dart';
-import 'package:task_manager/data/models/user_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
 import 'package:task_manager/data/utils/urls.dart';
-import 'package:task_manager/ui/controllers/auth_controller.dart';
 
 class NewTaskController extends GetxController {
   bool _getTaskCountByStatusInProgress = false;
   bool get getTaskCountByStatusInProgress => _getTaskCountByStatusInProgress;
 
   TaskCountByStatusModel? _taskCountByStatusModel;
-  TaskCountByStatusModel get taskCountByStatusModel => _taskCountByStatusModel!;
+  TaskCountByStatusModel get taskCountByStatusModel => _taskCountByStatusModel?? TaskCountByStatusModel(taskByStatusList: []);
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;

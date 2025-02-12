@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/data/models/recover_verify_otp_model.dart';
 import 'package:task_manager/data/services/network_caller.dart';
@@ -11,16 +12,15 @@ class VerifyOTPController extends GetxController {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  Future<bool> getVerifyOTP(String email, OTP) async {
+  Future<bool> getVerifyOTP(String email, otp) async {
     bool isSuccess = false;
-    // String? mail = email;
     _inProgress = true;
     update();
-    print(email);
+    debugPrint(email);
     final NetworkResponse response = await NetworkCaller.getRequest(
       url: Urls.recoverVerifyOTPlUrl(
         email,
-        OTP,
+        otp,
       ),
     );
     _inProgress = false;
@@ -28,14 +28,7 @@ class VerifyOTPController extends GetxController {
     if (response.isSuccess) {
       recoverVerifyOtp = RecoverVerifyOTP.fromJson(response.responseData!);
       if (recoverVerifyOtp!.status == 'success') {
-        // Navigator.pushNamed(context, ResetPasswordScreen.name);
         isSuccess = true;
-        String otp = OTP;
-        // Navigator.of(context).push(MaterialPageRoute(
-        //     builder: (context) => ResetPasswordScreen(
-        //           email: widget.email,
-        //           otp: otp,
-        //         )));
       } else {
         _errorMessage = 'No user found';
       }
