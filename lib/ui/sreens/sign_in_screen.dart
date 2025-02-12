@@ -133,6 +133,7 @@ class _SignInScreenState extends State<SignInScreen> {
       showSnackBarMessage(_signInController.errorMessage!);
     }
     else {
+        showSnackBarMessage(_signInController.errorMessage!);
         Get.offNamed(MainBottomNavScreen.name);
 
     }
